@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { RuleEvaluationService } from './rule-evaluation.service';
 import * as amqp from 'amqplib';
+import { Message } from 'amqplib';
 
 /**
  * TelemetryConsumer connects to RabbitMQ, consumes telemetry messages,
@@ -22,19 +23,18 @@ export class TelemetryConsumer implements OnModuleInit, OnModuleDestroy {
       this.connection = await amqp.connect(this.rabbitUrl);
       this.channel = await this.connection.createChannel();
       await this.channel.assertQueue(this.queueName, { durable: true });
-      await this.channel.consume(this.queueName, async (msg) => {
+      this.channel.consume(this.queueName, async (msg: Message | null) => {
         if (!msg) {
           return;
         }
+        const raw = msg.content.toString();
         try {
-          const raw = msg.content.toString();
           const data = JSON.parse(raw);
           const { deviceId, payload } = data;
           await this.ruleEvalService.evaluateTelemetry(deviceId, payload);
           this.channel?.ack(msg);
         } catch (err) {
           this.logger.error('Failed to process telemetry message', err);
-          // Optionally reject or requeue
           this.channel?.nack(msg, false, false);
         }
       });

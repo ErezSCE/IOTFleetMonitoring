@@ -19,9 +19,11 @@ describe('AuditInterceptor', () => {
           url: path,
           params,
           user,
-        }),
-      })),
-    } as unknown as ExecutionContext;
+        } as any),
+        getResponse: () => ({}),
+        getNext: () => ({}),
+      } as any),
+    } as any as ExecutionContext;
   };
 
   const mockHandler = (result: any): CallHandler => {
