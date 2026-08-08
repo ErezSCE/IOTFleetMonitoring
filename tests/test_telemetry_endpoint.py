@@ -1,9 +1,9 @@
 import os
 import json
 import pytest
-import asyncio
 import httpx
 import aio_pika
+import asyncio
 from testcontainers.rabbitmq import RabbitMqContainer
 
 # Ensure environment variables are set before importing the app

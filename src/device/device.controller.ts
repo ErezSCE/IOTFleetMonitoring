@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Get, Patch, Param } from '@nestjs/common';
+import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
@@ -21,5 +22,10 @@ export class DeviceController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateDto: UpdateDeviceDto): Promise<Device> {
     return this.deviceService.update(id, updateDto);
+  }
+
+  @Post(':id/notes')
+  async addNote(@Param('id') id: string, @Body() createNoteDto: CreateNoteDto) {
+    return this.deviceService.addNote(id, createNoteDto);
   }
 }

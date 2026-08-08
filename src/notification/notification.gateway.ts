@@ -8,7 +8,7 @@ import { Server, Socket } from 'socket.io';
 @WebSocketGateway({ namespace: '/notifications', cors: true })
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   handleConnection(client: Socket) {
     // Connection established – could log or perform auth if needed.
