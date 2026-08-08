@@ -6,7 +6,7 @@ import DeviceRegistrationForm from './DeviceRegistrationForm';
 
 describe('DeviceRegistrationForm', () => {
   it('renders the registration form with required fields', () => {
-    render(React.createElement(DeviceRegistrationForm));
+    render(<DeviceRegistrationForm />);
     // Check that the form fields are present
     expect(screen.getByLabelText(/Device Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Serial Number/i)).toBeInTheDocument();

@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 # Set environment variables before importing the app
 @pytest.fixture(scope="module", autouse=True)
 def set_env():
-    os.environ["DB_DSN"] = "postgresql://postgres:postgres@localhost:5432/iot"
+    os.environ["DB_DSN"] = ""
     yield
 
 @pytest.fixture(scope="module")

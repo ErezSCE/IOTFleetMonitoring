@@ -23,7 +23,9 @@ async def init_db_pool() -> None:
     global _db_pool
     if _db_pool is None:
         try:
-            _db_pool = await asyncpg.create_pool(dsn=settings.db_dsn)
+            if not settings.db_dsn:
+        return
+    _db_pool = await asyncpg.create_pool(dsn=settings.db_dsn)
         except Exception as e:
             # Log the error. In test environments, avoid raising to allow the app to start without a DB.
             import logging, sys
