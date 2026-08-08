@@ -45,7 +45,7 @@ async def async_client(app):
 async def test_post_telemetry_success(async_client):
     payload = {"device_id": "123e4567-e89b-12d3-a456-426614174000", "payload": {"temp": 22.5}}
     response = await async_client.post("/telemetry", json=payload)
-    assert response.status_code == 200
+    assert response.status_code == 202
     assert response.json()["status"] == "accepted"
 
 @pytest.mark.asyncio

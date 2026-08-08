@@ -10,7 +10,7 @@ import json
 
 router = APIRouter()
 
-@router.post("/telemetry", status_code=status.HTTP_200_OK)
+@router.post("/telemetry", status_code=status.HTTP_202_ACCEPTED)
 async def ingest_telemetry(telemetry: Telemetry):
     """Accept telemetry payload and publish it to RabbitMQ.
 
@@ -18,7 +18,7 @@ async def ingest_telemetry(telemetry: Telemetry):
     """
     try:
         # Serialize telemetry to JSON bytes
-        payload_bytes = json.dumps(telemetry.dict()).encode("utf-8")
+        payload_bytes = telemetry.json().encode("utf-8")
         await publish_telemetry(payload_bytes)
     except Exception as exc:
         # Log could be added here; for now raise HTTP 500

@@ -7,14 +7,12 @@ class Settings(BaseSettings):
 
     class Config:
         env_prefix = ""
+        env_file = ".env"
+        env_file_encoding = "utf-8"
         fields = {
             "db_dsn": {"env": "DB_DSN"},
             "rabbitmq_url": {"env": "RABBITMQ_URL"},
             "telemetry_queue": {"env": "TELEMETRY_QUEUE"},
         }
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 settings = Settings()
