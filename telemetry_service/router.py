@@ -56,12 +56,13 @@ async def get_telemetry_history(
     stmt = stmt.order_by(TelemetryORM.timestamp.asc()).limit(limit).offset(offset)
 
     result = []
-    async with db_session as session:
-        rows = await session.execute(stmt)
-        for orm_obj in rows.scalars():
-            result.append({
-                "device_id": orm_obj.device_id,
-                "timestamp": orm_obj.timestamp,
-                "payload": orm_obj.payload,
-            })
+    # db_session is an AsyncSession provided by the FastAPI dependency.
+    # It should be used directly without an async context manager.
+    rows = await db_session.execute(stmt)
+    for orm_obj in rows.scalars():
+        result.append({
+            "device_id": orm_obj.device_id,
+            "timestamp": orm_obj.timestamp,
+            "payload": orm_obj.payload,
+        })
     return result

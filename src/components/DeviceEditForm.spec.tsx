@@ -1,22 +1,29 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import axios from 'axios';
-import { notification } from 'antd';
-import DeviceEditForm, { DeviceEditFormProps } from './DeviceEditForm';
-
-jest.mock('axios');
+// Mock Ant Design components and notification
 jest.mock('antd', () => {
   const React = require('react');
-  const Form = ({ children, onFinish, initialValues, ...rest }) => (
+  // Simple Form mock that calls onFinish with form values
+  const Form = ({ children, onFinish, ...rest }) => (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onFinish(Object.fromEntries(new FormData(e.target)));
+        const formData = new FormData(e.target);
+        const values = {};
+        for (let [key, value] of formData.entries()) {
+          values[key] = value;
+        }
+        onFinish(values);
       }}
       {...rest}
     >
       {children}
     </form>
+  );
+  // Mock Form.Item to simply render its children
+  Form.Item = ({ label, name, children }) => (
+    <div>
+      <label>{label}</label>
+      {React.cloneElement(children, { name })}
+    </div>
   );
   const Input = (props) => <input {...props} />;
   Input.TextArea = (props) => <textarea {...props} />;
@@ -24,6 +31,14 @@ jest.mock('antd', () => {
   const notification = { success: jest.fn(), error: jest.fn() };
   return { Form, Input, Button, notification };
 });
+
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import axios from 'axios';
+import DeviceEditForm, { DeviceEditFormProps } from './DeviceEditForm';
+import { notification } from 'antd';
+
+jest.mock('axios');
 
 describe('DeviceEditForm', () => {
   const defaultProps: DeviceEditFormProps = {

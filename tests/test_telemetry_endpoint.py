@@ -65,7 +65,7 @@ async def test_telemetry_published(rabbitmq_container, async_client):
     incoming = await queue.get(timeout=5)
     body = incoming.body.decode()
     data = json.loads(body)
-    assert data["device_id"] == 2
+    assert data["device_id"] == "123e4567-e89b-12d3-a456-426614174001"
     assert data["payload"]["humidity"] == 55
 
     await connection.close()

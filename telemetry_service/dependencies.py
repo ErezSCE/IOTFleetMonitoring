@@ -25,8 +25,15 @@ async def init_db_pool() -> None:
         try:
             _db_pool = await asyncpg.create_pool(dsn=settings.db_dsn)
         except Exception as e:
-            # In test or environments without DB, ignore connection errors
-            _db_pool = None
+            # Log the error. In test environments, avoid raising to allow the app to start without a DB.
+            import logging, sys
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to initialize DB pool: {e}")
+            if 'pytest' in sys.modules:
+                # Swallow the error in tests; leave _db_pool as None.
+                _db_pool = None
+            else:
+                raise
 
 async def close_db_pool() -> None:
     """Close the asyncpg connection pool.
