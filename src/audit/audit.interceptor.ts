@@ -60,8 +60,8 @@ export class AuditInterceptor implements NestInterceptor {
           entityId,
           action,
           performedBy,
-          beforeJson: null,
-          afterJson: after,
+          beforeJson: undefined,
+          afterJson: typeof after === 'object' && after !== null ? (after as Record<string, any>) : undefined,
         });
         // Fire and forget – we don't block the main flow
         this.auditRepo.save(audit).catch((err) => {

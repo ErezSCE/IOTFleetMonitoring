@@ -1,9 +1,9 @@
 import os
 import json
 import pytest
-# # # import asyncio
 import httpx
 import aio_pika
+import asyncio
 from testcontainers.rabbitmq import RabbitMqContainer
 
 # Ensure environment variables are set before importing the app
@@ -37,35 +37,39 @@ def app():
     return fastapi_app
 
 @pytest.fixture
-async def async_client(app):
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
-        yield client
+def async_client(app):
+    client = httpx.AsyncClient(app=app, base_url="http://test")
+    yield client
+    # close client after test
+    asyncio.run(client.aclose())
 
-@pytest.mark.asyncio
-async def test_post_telemetry_success(async_client):
-    payload = {"device_id": "123e4567-e89b-12d3-a456-426614174000", "payload": {"temp": 22.5}}
-    response = await async_client.post("/telemetry", json=payload)
-    assert response.status_code == 202
-    assert response.json()["status"] == "accepted"
+def test_post_telemetry_success(async_client):
+    async def inner():
+        payload = {"device_id": "123e4567-e89b-12d3-a456-426614174000", "payload": {"temp": 22.5}}
+        response = await async_client.post("/telemetry", json=payload)
+        assert response.status_code == 202
+        assert response.json()["status"] == "accepted"
+    asyncio.run(inner())
 
-@pytest.mark.asyncio
-async def test_telemetry_published(rabbitmq_container, async_client):
-    # Connect directly to RabbitMQ to verify message
-    connection = await aio_pika.connect_robust(os.getenv("RABBITMQ_URL"))
-    channel = await connection.channel()
-    queue = await channel.declare_queue("telemetry", durable=True)
-    # Ensure queue is empty
-    await queue.purge()
+def test_telemetry_published(rabbitmq_container, async_client):
+    async def inner():
+        # Connect directly to RabbitMQ to verify message
+        connection = await aio_pika.connect_robust(os.getenv("RABBITMQ_URL"))
+        channel = await connection.channel()
+        queue = await channel.declare_queue("telemetry", durable=True)
+        # Ensure queue is empty
+        await queue.purge()
 
-    payload = {"device_id": "123e4567-e89b-12d3-a456-426614174001", "payload": {"humidity": 55}}
-    response = await async_client.post("/telemetry", json=payload)
-    assert response.status_code == 202
+        payload = {"device_id": "123e4567-e89b-12d3-a456-426614174001", "payload": {"humidity": 55}}
+        response = await async_client.post("/telemetry", json=payload)
+        assert response.status_code == 202
 
-    # Retrieve the message from the queue
-    incoming = await queue.get(timeout=5)
-    body = incoming.body.decode()
-    data = json.loads(body)
-    assert data["device_id"] == "123e4567-e89b-12d3-a456-426614174001"
-    assert data["payload"]["humidity"] == 55
+        # Retrieve the message from the queue
+        incoming = await queue.get(timeout=5)
+        body = incoming.body.decode()
+        data = json.loads(body)
+        assert data["device_id"] == "123e4567-e89b-12d3-a456-426614174001"
+        assert data["payload"]["humidity"] == 55
 
-    await connection.close()
+        await connection.close()
+    asyncio.run(inner())
