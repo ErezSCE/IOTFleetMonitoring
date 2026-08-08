@@ -1,7 +1,7 @@
 import os
 import json
 import pytest
-import asyncio
+# # # import asyncio
 import httpx
 import aio_pika
 from testcontainers.rabbitmq import RabbitMqContainer
