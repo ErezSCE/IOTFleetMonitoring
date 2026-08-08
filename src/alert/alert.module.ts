@@ -12,7 +12,7 @@ import { TelemetryConsumer } from './telemetry.consumer';
  */
 @Module({
   imports: [TypeOrmModule.forFeature([Alert, AlertRule])],
-  providers: [AlertService, EmailService, RuleEvaluationService, TelemetryConsumer, RedisPublisherService],
+  providers: [AlertService, EmailService, RuleEvaluationService, TelemetryConsumer, RedisPublisherService, AlertRuleService],
   exports: [AlertService],
 })
 export class AlertModule {}
