@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+asyncpg
+aio-pika
+pydantic
+pytest
+pytest-asyncio
+httpx
+testcontainers[rabbitmq]
