@@ -22,6 +22,7 @@ export class DeviceService {
       throw new NotFoundException(`Device with id ${deviceId} not found`);
     }
     const note = this.noteRepository.create({
+      device,
       deviceId,
       authorId: createNoteDto.authorId,
       content: createNoteDto.content,
@@ -43,7 +44,11 @@ export class DeviceService {
     if (result.affected === 0) {
       throw new NotFoundException(`Device with id ${id} not found`);
     }
-    return this.deviceRepository.findOne({ where: { id } });
+    const device = await this.deviceRepository.findOne({ where: { id } });
+    if (!device) {
+      throw new NotFoundException(`Device with id ${id} not found`);
+    }
+    return device as Device;
   }
 }
 

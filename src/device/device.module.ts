@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeviceController } from './device.controller';
 import { DeviceService } from './device.service';
 import { Device } from './device.entity';
+import { Note } from './note.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Device, Note])],

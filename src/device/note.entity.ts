@@ -9,7 +9,7 @@ export class Note {
   @Column({ type: 'uuid' })
   deviceId!: string;
 
-  @ManyToOne(() => Device, (device) => device.id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Device, (device) => device.notes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'deviceId' })
   device?: Device;
 

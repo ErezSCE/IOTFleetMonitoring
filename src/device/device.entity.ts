@@ -1,7 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Note } from './note.entity';
 
 @Entity('devices')
 export class Device {
+  @OneToMany(() => Note, note => note.device, { cascade: true })
+  notes: Note[];
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

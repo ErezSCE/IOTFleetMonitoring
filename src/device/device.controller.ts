@@ -23,4 +23,9 @@ export class DeviceController {
   async update(@Param('id') id: string, @Body() updateDto: UpdateDeviceDto): Promise<Device> {
     return this.deviceService.update(id, updateDto);
   }
+
+  @Post(':id/notes')
+  async addNote(@Param('id') id: string, @Body() createNoteDto: CreateNoteDto) {
+    return this.deviceService.addNote(id, createNoteDto);
+  }
 }

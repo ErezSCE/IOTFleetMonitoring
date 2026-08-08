@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { DeviceModule } from './device.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Device } from './device.entity';
+import { Note } from './note.entity';
 
 describe('DeviceController (e2e)', () => {
   let app: INestApplication;
@@ -14,7 +15,7 @@ describe('DeviceController (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Device],
+          entities: [Device, Note],
           synchronize: true,
         }),
         DeviceModule,
