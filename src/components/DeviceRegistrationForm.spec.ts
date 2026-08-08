@@ -23,7 +23,7 @@ describe('DeviceRegistrationForm', () => {
   });
 
   it('renders all form fields', () => {
-    render(<DeviceRegistrationForm />);
+    render(React.createElement(DeviceRegistrationForm));
     expect(screen.getByLabelText(/Device Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Serial Number/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Metadata/i)).toBeInTheDocument();
