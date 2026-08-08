@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateNoteDto } from './dto/create-note.dto';
+import { Note } from './note.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Device } from './device.entity';
@@ -9,7 +11,23 @@ export class DeviceService {
   constructor(
     @InjectRepository(Device)
     private readonly deviceRepository: Repository<Device>,
+    @InjectRepository(Note)
+    private readonly noteRepository: Repository<Note>,
   ) {}
+
+  async addNote(deviceId: string, createNoteDto: CreateNoteDto): Promise<Note> {
+    // Ensure device exists
+    const device = await this.deviceRepository.findOne({ where: { id: deviceId } });
+    if (!device) {
+      throw new NotFoundException(`Device with id ${deviceId} not found`);
+    }
+    const note = this.noteRepository.create({
+      deviceId,
+      authorId: createNoteDto.authorId,
+      content: createNoteDto.content,
+    });
+    return this.noteRepository.save(note);
+  }
 
   async create(createDto: CreateDeviceDto): Promise<Device> {
     const device = this.deviceRepository.create(createDto);

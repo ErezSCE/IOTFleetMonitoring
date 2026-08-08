@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Get, Patch, Param } from '@nestjs/common';
+import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
