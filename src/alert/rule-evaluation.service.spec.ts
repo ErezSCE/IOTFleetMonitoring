@@ -30,15 +30,13 @@ describe('RuleEvaluationService', () => {
       publishAlert: jest.fn().mockResolvedValue(undefined),
     } as any;
 
-    // @ts-ignore: constructor expects injected repos/services
+    // Instantiate service with mocked RedisPublisherService
     service = new RuleEvaluationService(
       mockRuleRepo as Repository<AlertRule>,
       mockAlertService as AlertService,
       mockEmailService as EmailService,
-    );
-    // manually set private redisPublisher (since not injected via constructor in test)
-    (service as any).redisPublisher = mockRedisPublisher;
-  });
+      mockRedisPublisher as any,
+    );  });
 
   it('should create alert, send email and publish to Redis when condition matches', async () => {
     const rule: AlertRule = {
