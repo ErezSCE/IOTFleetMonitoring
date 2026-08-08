@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeviceModule } from './device/device.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
+    NotificationModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
