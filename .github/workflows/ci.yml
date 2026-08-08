@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build Docker images
+        run: |
+          docker build -t iotfleetmonitoring-device-service ./device-service
+          docker build -t iotfleetmonitoring-frontend ./frontend
+
+      - name: Push Docker images to ECR
+        run: echo "Push to ECR placeholder"
+
+      - name: Deploy to staging
+        run: echo "Deploy placeholder"
+
+      - name: Post-deployment smoke test
+        run: |
+          echo "Running post-deployment smoke test"
+          curl -f -s http://staging.example.com/health || exit 1
