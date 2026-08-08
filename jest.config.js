@@ -1,13 +1,13 @@
 module.exports = {
-  testPathIgnorePatterns: ['<rootDir>/**/*.spec.ts'],
-  // Disable type checking diagnostics to allow test files with minor type issues
+  // Ignore node_modules and build output
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   globals: {
     'ts-jest': {
       diagnostics: false,
     },
   },
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   roots: ['<rootDir>/src'],
   // Match .spec.ts and .spec.tsx files
   testRegex: '.*\\.spec\\.(ts|tsx)$',
