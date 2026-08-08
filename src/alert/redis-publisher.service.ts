@@ -14,7 +14,7 @@ export class RedisPublisherService {
   constructor() {
     // Connection details could be configured via env vars; using defaults for now.
     this.redisClient = new Redis();
-    this.redisClient.on('error', (err: any) => this.logger.error('Redis error', err));
+    this.redisClient.on('error', (err: any) => this.logger.error('Redis error', err && err.stack ? err.stack : JSON.stringify(err)));
   }
 
   async publishAlert(alert: Alert): Promise<void> {
