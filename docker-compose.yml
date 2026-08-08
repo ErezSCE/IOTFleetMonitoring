@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    networks:
+      - iotnet
+
+  device-service:
+    build:
+      context: ./device-service
+    ports:
+      - "3001:3000"
+    depends_on:
+      - postgres
+    networks:
+      - iotnet
+
+  telemetry-service:
+    build:
+      context: ./telemetry-service
+    ports:
+      - "3002:3000"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - iotnet
+
+  alert-service:
+    build:
+      context: ./alert-service
+    ports:
+      - "3003:3000"
+    depends_on:
+      - rabbitmq
+    networks:
+      - iotnet
+
+  websocket-service:
+    build:
+      context: ./websocket-service
+    ports:
+      - "3004:3000"
+    depends_on:
+      - redis
+    networks:
+      - iotnet
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: iot_user
+      POSTGRES_PASSWORD: iot_pass
+      POSTGRES_DB: iotdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - iotnet
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - iotnet
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - iotnet
+
+networks:
+  iotnet:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
