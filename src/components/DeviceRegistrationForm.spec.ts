@@ -53,7 +53,7 @@ describe('DeviceRegistrationForm', () => {
     (axios.post as jest.Mock).mockRejectedValueOnce({
       response: { data: { message: 'Invalid data' } },
     });
-    render(<DeviceRegistrationForm />);
+    render(React.createElement(DeviceRegistrationForm));
 
     fireEvent.change(screen.getByLabelText(/Device Name/i), { target: { value: 'Bad Device' } });
     fireEvent.change(screen.getByLabelText(/Serial Number/i), { target: { value: '' } }); // missing serial triggers validation but we bypass by submitting directly

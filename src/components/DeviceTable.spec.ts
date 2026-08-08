@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import axios from 'axios';
-// socket.io-client is mocked in tests; no import needed
+import { io } from 'socket.io-client'; // socket.io-client is mocked in tests
 // Removed direct import of io to avoid type issues
 import DeviceTable from './DeviceTable';
 

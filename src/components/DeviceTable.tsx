@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Tag, Input, Button, Space } from 'antd';
+import { Table, Tag, Input, Button, Space, Alert } from 'antd';
 import type { ColumnsType, TablePaginationConfig, SorterResult, FilterValue } from 'antd/es/table/interface';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
@@ -16,19 +16,25 @@ interface Device {
 interface DeviceTableProps {}
 
 const DeviceTable: React.FC<DeviceTableProps> = () => {
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [allDevices, setAllDevices] = useState<Device[]>([]);
+  const [filteredDevices, setFilteredDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch devices from backend
   const fetchDevices = useCallback(async () => {
     setLoading(true);
     try {
       const response: AxiosResponse<Device[]> = await axios.get('/api/devices');
-      setDevices(response.data);
+      setAllDevices(response.data);
+      // initial filter
+      setFilteredDevices(response.data);
     } catch (error) {
       // In production, handle error UI
       console.error('Failed to fetch devices', error);
+      setError('Failed to fetch devices');
     } finally {
       setLoading(false);
     }
@@ -37,7 +43,8 @@ const DeviceTable: React.FC<DeviceTableProps> = () => {
   // Initialize data and WebSocket connection
   useEffect(() => {
     fetchDevices();
-    const newSocket = io('http://localhost:3000', {
+    const wsUrl = (import.meta.env && import.meta.env.VITE_WS_URL) ? import.meta.env.VITE_WS_URL : 'http://localhost:3000';
+    const newSocket = io(wsUrl, {
       path: '/notifications',
       transports: ['websocket'],
     });
@@ -110,10 +117,17 @@ const DeviceTable: React.FC<DeviceTableProps> = () => {
 
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
-      <Input.Search placeholder="Search by name" onSearch={(value) => {
-        const filtered = devices.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
-        setDevices(filtered);
-      }} allowClear style={{ width: 300 }} />
+      <Input.Search
+        placeholder="Search by name"
+        allowClear
+        style={{ width: 300 }}
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        onSearch={(value) => {
+          const filtered = allDevices.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
+          setFilteredDevices(filtered);
+        }}
+      />
       <Table
         rowKey="id"
         columns={columns}

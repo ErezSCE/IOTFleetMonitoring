@@ -8,7 +8,7 @@ import { NotificationGateway } from './notification.gateway';
  */
 @Injectable()
 export class NotificationService implements OnModuleInit, OnModuleDestroy {
-  private redisSubscriber: Redis;
+  private redisSubscriber!: Redis;
   private readonly channel = 'device-updates';
 
   constructor(private readonly gateway: NotificationGateway) {}
