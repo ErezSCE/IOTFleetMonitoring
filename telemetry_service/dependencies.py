@@ -43,6 +43,16 @@ async def get_db_pool() -> asyncpg.pool.Pool:
         raise RuntimeError("Database pool not initialized")
     return _db_pool
 
+# New async SQLAlchemy session dependency
+from telemetry_service.database import AsyncSessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
+
+async def get_db_session() -> AsyncSession:
+    """Provide an async SQLAlchemy session.
+    """
+    async with AsyncSessionLocal() as session:
+        yield session
+
 async def init_rabbitmq() -> None:
     """Initialize RabbitMQ connection and channel.
     """
