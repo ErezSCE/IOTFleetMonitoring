@@ -37,7 +37,7 @@ describe('NotificationService', () => {
     service.onModuleInit();
     expect(ioredis).toHaveBeenCalledWith({
       host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+      port: parseInt(process.env.REDIS_PORT as string, 10) || 6379,
     });
     expect(redisInstance.subscribe).toHaveBeenCalledWith('device-updates', expect.any(Function));
   });

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { Device } from './device.entity';
@@ -13,7 +13,25 @@ export class DeviceController {
   }
 
   @Get()
-  async findAll(): Promise<Device[]> {
-    return this.deviceService.findAll();
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('sortBy') sortBy?: keyof Device,
+    @Query('sortOrder') sortOrder?: 'ASC' | 'DESC',
+    @Query('name') nameFilter?: string,
+    @Query('isActive') isActive?: string,
+  ): Promise<any> {
+    const parsedPage = page ? parseInt(page, 10) : undefined;
+    const parsedLimit = limit ? parseInt(limit, 10) : undefined;
+    const parsedIsActive = isActive !== undefined ? isActive === 'true' : undefined;
+    const result = await this.deviceService.findAllPaginated({
+      page: parsedPage,
+      limit: parsedLimit,
+      sortBy,
+      sortOrder,
+      nameFilter,
+      isActive: parsedIsActive,
+    });
+    return result;
   }
 }
