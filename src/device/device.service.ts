@@ -26,7 +26,11 @@ export class DeviceService {
     if (result.affected === 0) {
       throw new NotFoundException(`Device with id ${id} not found`);
     }
-    return this.deviceRepository.findOne({ where: { id } });
+    const device = await this.deviceRepository.findOne({ where: { id } });
+    if (!device) {
+      throw new NotFoundException(`Device with id ${id} not found`);
+    }
+    return device;
   }
 }
 

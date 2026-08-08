@@ -34,7 +34,7 @@ describe('DeviceEditForm', () => {
   });
 
   it('renders form fields with initial values', () => {
-    render(<DeviceEditForm {...defaultProps} />);
+    render(React.createElement(DeviceEditForm, defaultProps));
     expect(screen.getByLabelText(/Device Name/i)).toHaveValue('Test Device');
     expect(screen.getByLabelText(/Serial Number/i)).toHaveValue('SN123');
     expect(screen.getByLabelText(/Metadata/i)).toHaveValue('{"key":"value"}');
