@@ -22,7 +22,7 @@ export class TelemetryConsumer implements OnModuleInit, OnModuleDestroy {
       this.connection = await amqp.connect(this.rabbitUrl);
       this.channel = await this.connection.createChannel();
       await this.channel.assertQueue(this.queueName, { durable: true });
-      await this.channel.consume(this.queueName, async (msg) => {
+      await this.channel.consume(this.queueName, async (msg: any) => {
         if (!msg) {
           return;
         }
