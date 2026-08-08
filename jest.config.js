@@ -1,5 +1,5 @@
 module.exports = {
-  testPathIgnorePatterns: ['<rootDir>/**/*.spec.ts'],
+  // testPathIgnorePatterns removed to avoid regex issues
   // Disable type checking diagnostics to allow test files with minor type issues
   globals: {
     'ts-jest': {
