@@ -31,6 +31,54 @@ describe('AuditInterceptor - additional methods', () => {
   };
 
   beforeEach(async () => {
+    // Reset mock implementations before each test
+    mockRepo = {
+      create: jest.fn().mockImplementation((dto) => dto as AuditLog),
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuditInterceptor,
+        {
+          provide: getRepositoryToken(AuditLog),
+          useValue: mockRepo,
+        },
+      ],
+    }).compile();
+    interceptor = module.get<AuditInterceptor>(AuditInterceptor);
+    (interceptor as any).auditRepo = mockRepo;
+  });
+
+  it('should not break request flow when audit save fails', async () => {
+    // Setup repo to reject on save
+    mockRepo = {
+      create: jest.fn().mockImplementation((dto) => dto as AuditLog),
+      save: jest.fn().mockRejectedValue(new Error('DB error')),
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuditInterceptor,
+        {
+          provide: getRepositoryToken(AuditLog),
+          useValue: mockRepo,
+        },
+      ],
+    }).compile();
+    interceptor = module.get<AuditInterceptor>(AuditInterceptor);
+    // Replace logger with mock
+    (interceptor as any).logger = { error: jest.fn() } as any;
+    (interceptor as any).auditRepo = mockRepo;
+
+    const ctx = mockContext('POST', '/devices', { id: 'abc' }, { id: 'user-2' });
+    const handlerResult = { success: true };
+    const handler = mockHandler(handlerResult);
+
+    const result = await firstValueFrom(interceptor.intercept(ctx, handler));
+    expect(result).toEqual(handlerResult);
+    expect(mockRepo.save).toHaveBeenCalled();
+    expect((interceptor as any).logger.error).toHaveBeenCalledWith('Failed to save audit log', expect.any(Error));
+  });
+
     mockRepo = {
       create: jest.fn().mockImplementation((dto) => dto as AuditLog),
       save: jest.fn().mockResolvedValue(undefined),

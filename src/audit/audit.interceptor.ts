@@ -38,7 +38,10 @@ export class AuditInterceptor implements NestInterceptor {
 
     const performedBy = request.user?.id || null;
     const entityId = request.params?.id || null;
-    const entityType = path;
+    // Normalize entity type to a static resource name (e.g., 'devices')
+    const rawEntity = path;
+    const entitySegments = rawEntity.split('/').filter(Boolean);
+    const entityType = entitySegments[0] || rawEntity;
     const actionMap: Record<string, string> = {
       POST: 'CREATE',
       PUT: 'UPDATE',
@@ -57,7 +60,7 @@ export class AuditInterceptor implements NestInterceptor {
           entityId,
           action,
           performedBy,
-          // beforeJson omitted to avoid null assignment
+          beforeJson: null,
           afterJson: after,
         });
         // Fire and forget – we don't block the main flow

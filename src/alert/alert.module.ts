@@ -1,4 +1,5 @@
 import { Module, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { RedisPublisherService } from './redis-publisher.service';
 import { ExternalAlertsController } from './external-alerts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Alert } from './alert.entity';
