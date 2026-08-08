@@ -13,7 +13,8 @@ from uuid import UUID
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 
-// Removed FastAPI router - not part of this frontend repo
+# Router definition
+router = APIRouter()
 
 @router.post("/telemetry", status_code=status.HTTP_202_ACCEPTED)
 async def ingest_telemetry(telemetry: Telemetry):
