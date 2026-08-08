@@ -3,9 +3,10 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  Logger,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditLog } from './audit-log.entity';
@@ -18,6 +19,8 @@ import { AuditLog } from './audit-log.entity';
  */
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(AuditInterceptor.name);
+
   constructor(
     @InjectRepository(AuditLog)
     private readonly auditRepo: Repository<AuditLog>,
@@ -46,7 +49,7 @@ export class AuditInterceptor implements NestInterceptor {
 
     // Capture the response to log after the handler completes
     return next.handle().pipe(
-      map(async (result) => {
+      mergeMap(async (result) => {
         // result may be a Promise if handler returns one; ensure resolved value
         const after = await Promise.resolve(result);
         const audit = this.auditRepo.create({
@@ -54,12 +57,12 @@ export class AuditInterceptor implements NestInterceptor {
           entityId,
           action,
           performedBy,
-          beforeJson: null, // Simplified: not capturing before state
+          // beforeJson omitted to avoid null assignment
           afterJson: after,
         });
-        // Fire and forget – we don't block the response
-        this.auditRepo.save(audit).catch(() => {
-          // Swallow errors to avoid breaking the main flow
+        // Fire and forget – we don't block the main flow
+        this.auditRepo.save(audit).catch((err) => {
+          this.logger.error('Failed to save audit log', err);
         });
         return after;
       }),

@@ -1,4 +1,8 @@
 import { Module } from '@nestjs/common';
+import { AlertModule } from './alert/alert.module';
+import { AuditModule } from './audit/audit.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AuditInterceptor } from './audit/audit.interceptor';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeviceModule } from './device/device.module';
 import { NotificationModule } from './notification/notification.module';
@@ -18,8 +22,9 @@ import { NotificationModule } from './notification/notification.module';
     }),
     DeviceModule,
     AlertModule,
+    AuditModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: AuditInterceptor }],
 })
 export class AppModule {}
