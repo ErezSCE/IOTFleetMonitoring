@@ -57,15 +57,15 @@ async def test_telemetry_published(rabbitmq_container, async_client):
     # Ensure queue is empty
     await queue.purge()
 
-    payload = {"device_id": 2, "payload": {"humidity": 55}}
+    payload = {"device_id": "123e4567-e89b-12d3-a456-426614174001", "payload": {"humidity": 55}}
     response = await async_client.post("/telemetry", json=payload)
-    assert response.status_code == 200
+    assert response.status_code == 202
 
     # Retrieve the message from the queue
     incoming = await queue.get(timeout=5)
     body = incoming.body.decode()
     data = json.loads(body)
-    assert data["device_id"] == 2
+    assert data["device_id"] == "123e4567-e89b-12d3-a456-426614174001"
     assert data["payload"]["humidity"] == 55
 
     await connection.close()
