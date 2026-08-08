@@ -15,6 +15,7 @@ import { DeviceModule } from './device/device.module';
       synchronize: true,
     }),
     DeviceModule,
+    AlertModule,
   ],
   controllers: [],
   providers: [],

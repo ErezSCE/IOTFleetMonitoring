@@ -32,7 +32,7 @@ describe('DeviceRegistrationForm', () => {
 
   it('submits form successfully and shows success notification', async () => {
     (axios.post as jest.Mock).mockResolvedValueOnce({ data: {} });
-    render(<DeviceRegistrationForm />);
+    render(React.createElement(DeviceRegistrationForm));
 
     fireEvent.change(screen.getByLabelText(/Device Name/i), { target: { value: 'Test Device' } });
     fireEvent.change(screen.getByLabelText(/Serial Number/i), { target: { value: 'SN12345' } });
