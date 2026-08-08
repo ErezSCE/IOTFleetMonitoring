@@ -10,6 +10,17 @@ import json
 
 router = APIRouter()
 
+from uuid import UUID
+from datetime import datetime, timedelta
+from typing import List, Dict, Any
+from fastapi import Depends, status
+from .dependencies import get_db_pool
+
+from uuid import UUID
+from datetime import datetime, timedelta
+from typing import List, Dict, Any
+from .dependencies import get_db_pool
+
 @router.post("/telemetry", status_code=status.HTTP_202_ACCEPTED)
 async def ingest_telemetry(telemetry: Telemetry):
     """Accept telemetry payload and publish it to RabbitMQ.
