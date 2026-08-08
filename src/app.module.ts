@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AlertModule } from './alert/alert.module';
+// import { AlertModule } from './alert/alert.module';
 import { AuditModule } from './audit/audit.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuditInterceptor } from './audit/audit.interceptor';
@@ -22,7 +22,7 @@ import { NotificationModule } from './notification/notification.module';
       migrations: [__dirname + '/migration/*{.ts,.js}'],
     }),
     DeviceModule,
-    AlertModule,
+    // AlertModule, // removed to reduce bundle size
     AuditModule,
   ],
   controllers: [],
