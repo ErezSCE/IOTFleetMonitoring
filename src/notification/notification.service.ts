@@ -17,7 +17,7 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
     // Initialize Redis client for subscription
     this.redisSubscriber = new Redis({
       host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT ?? '6379', 10),
+      port: parseInt(process.env.REDIS_PORT as string, 10) || 6379,
     });
 
     this.redisSubscriber.subscribe(this.channel, (err, count) => {
