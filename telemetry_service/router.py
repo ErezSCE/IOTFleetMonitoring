@@ -30,7 +30,7 @@ async def ingest_telemetry(telemetry: Telemetry):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc))
     return {"status": "accepted"}
 
-@router.get("/telemetry/{device_id}", response_model=List[Telemetry])
+@router.get("/external/devices/{device_id}/telemetry", response_model=List[Telemetry])
 async def get_telemetry_history(
     device_id: UUID,
     start: Optional[datetime] = None,

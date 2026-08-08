@@ -54,7 +54,7 @@ async def async_client():
 @pytest.mark.asyncio
 async def test_fetch_telemetry_history(async_client):
     device_id = "123e4567-e89b-12d3-a456-426614174000"
-    response = await async_client.get(f"/telemetry/{device_id}")
+    response = await async_client.get(f"/external/devices/{device_id}/telemetry")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
