@@ -14,5 +14,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "dist", "cypress"]
+  "exclude": ["node_modules", "dist", "cypress", "**/*.spec.ts", "**/*.spec.tsx"]
 }
