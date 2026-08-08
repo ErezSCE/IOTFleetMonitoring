@@ -23,22 +23,15 @@ module.exports = {
     react: { version: 'detect' },
   },
   rules: {
-    // Add project-specific lint rules here
+    // existing rules
   },
-};
-  env: {
-    node: true,
-    es2021: true,
-    jest: true,
-  },
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
-  },
-  plugins: ['@typescript-eslint'],
-  rules: {
-    // Add project-specific lint rules here
-  },
+  overrides: [
+    {
+      files: ['*.test.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
+  // Add project-specific lint rules here
 };
