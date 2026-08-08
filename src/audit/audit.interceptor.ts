@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, catchError } from 'rxjs/operators';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuditLog } from './audit-log.entity';
@@ -41,7 +41,7 @@ export class AuditInterceptor implements NestInterceptor {
     // Normalize entity type to a static resource name (e.g., 'devices')
     const rawEntity = path;
     const entitySegments = rawEntity.split('/').filter(Boolean);
-    const entityType = entitySegments[0] || rawEntity;
+    const entityType = rawEntity;
     const actionMap: Record<string, string> = {
       POST: 'CREATE',
       PUT: 'UPDATE',
@@ -55,20 +55,30 @@ export class AuditInterceptor implements NestInterceptor {
       mergeMap(async (result) => {
         // result may be a Promise if handler returns one; ensure resolved value
         const after = await Promise.resolve(result);
-        const audit = this.auditRepo.create({
+        const auditData: Partial<AuditLog> = {
           entityType,
           entityId,
           action,
           performedBy,
-          beforeJson: null,
-          afterJson: after,
-        });
-        // Fire and forget – we don't block the main flow
-        this.auditRepo.save(audit).catch((err) => {
+          beforeJson: undefined,
+          afterJson: typeof after === 'object' && after !== null ? (after as Record<string, any>) : undefined,
+        };
+        let savedAudit: AuditLog | null = null;
+        try {
+          // Directly save the audit data without creating an entity array
+          savedAudit = await this.auditRepo.save(auditData as any);
+        } catch (err) {
           this.logger.error('Failed to save audit log', err);
-        });
+          // Propagate error to be handled by outer catchError
+          throw err;
+        }
         return after;
       }),
+      catchError((err) => {
+        // Log and rethrow to avoid swallowing errors
+        this.logger.error('Audit interceptor processing error', err);
+        throw err;
+      })
     );
   }
 }
