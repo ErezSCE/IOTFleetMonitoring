@@ -1,4 +1,5 @@
 import { Module, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { ExternalAlertsController } from './external-alerts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Alert } from './alert.entity';
 import { AlertRule } from './alert-rule.entity';
@@ -12,6 +13,7 @@ import { TelemetryConsumer } from './telemetry.consumer';
  */
 @Module({
   imports: [TypeOrmModule.forFeature([Alert, AlertRule])],
+  controllers: [ExternalAlertsController],
   providers: [AlertService, EmailService, RuleEvaluationService, TelemetryConsumer, RedisPublisherService],
   exports: [AlertService],
 })
