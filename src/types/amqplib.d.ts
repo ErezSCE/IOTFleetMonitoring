@@ -14,7 +14,7 @@ declare module 'amqplib' {
     ack(msg: Message): void;
     nack(msg: Message, allUpTo?: boolean, requeue?: boolean): void;
     close(): Promise<void>;
-    publish(channel: string, message: string): Promise<void>;
+    publish(exchange: string, routingKey: string, content: Buffer, options?: any): boolean;
   }
   export function connect(url: string): Promise<Connection>;
 }

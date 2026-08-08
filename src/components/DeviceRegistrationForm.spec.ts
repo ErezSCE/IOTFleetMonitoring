@@ -1,4 +1,4 @@
-// @ts-nocheck
+// Deprecated test file - functionality moved to DeviceRegistrationForm.spec.tsx
 import React from 'react';
 
 import { render, screen } from '@testing-library/react';

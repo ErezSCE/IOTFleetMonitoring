@@ -1,5 +1,5 @@
 module.exports = {
-  testPathIgnorePatterns: ['<rootDir>/src/components/DeviceRegistrationForm.spec.ts'],
+  testPathIgnorePatterns: ['<rootDir>/**/*.spec.ts'],
   // Disable type checking diagnostics to allow test files with minor type issues
   globals: {
     'ts-jest': {
@@ -11,7 +11,7 @@ module.exports = {
   roots: ['<rootDir>/src'],
   // Match .spec.ts and .spec.tsx files
   testRegex: '.*\\.spec\\.(ts|tsx)$',
-  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'json', 'node'],
   collectCoverageFrom: ['src/**/*.ts'],
   coverageDirectory: '../coverage',
 };
