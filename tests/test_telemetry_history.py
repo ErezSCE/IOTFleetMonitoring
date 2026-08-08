@@ -1,5 +1,6 @@
 import os
 import pytest
+import pytest_asyncio
 import httpx
 from uuid import UUID
 from datetime import datetime, timedelta
@@ -7,7 +8,7 @@ from testcontainers.postgres import PostgresContainer
 
 # Fixtures
 
-@pytest.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module")
 def postgres_container():
     container = PostgresContainer("postgres:15-alpine")
     container.start()
@@ -45,7 +46,7 @@ async def setup_db(postgres_container):
             await conn.execute(TelemetryORM.__table__.insert().values(**r))
     yield
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client():
     from telemetry_service.app import app as fastapi_app
     async with httpx.AsyncClient(app=fastapi_app, base_url="http://test") as client:
