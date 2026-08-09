@@ -1,0 +1,37 @@
+# ---------- Build Stage ----------
+FROM node:20-slim AS builder
+
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm config set strict-ssl false && npm ci
+
+# Copy source code
+COPY . .
+
+# Build NestJS application
+RUN npm run build
+
+# ---------- Production Stage ----------
+FROM node:20-slim
+
+# Add non‑root user
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -s /bin/bash -m appuser
+
+WORKDIR /app
+
+# Copy compiled output and production dependencies
+COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm config set strict-ssl false && npm ci --omit=dev && npm cache clean --force
+
+USER appuser
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+CMD ["node","dist/main"]

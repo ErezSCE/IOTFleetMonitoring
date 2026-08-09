@@ -1,0 +1,27 @@
+# ---------- Build Stage ----------
+FROM node:20-slim AS builder
+
+WORKDIR /app
+
+# Install dependencies (including Vite)
+COPY package*.json ./
+RUN npm config set strict-ssl false && npm ci
+
+# Copy source code
+COPY . .
+
+# Build the React Vite app
+RUN npm run build
+
+# ---------- Production Stage ----------
+FROM nginx:alpine
+
+# Copy built assets
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose HTTP
+EXPOSE 80
+
+# Health‑check (nginx returns 200 on /)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
+  CMD curl -f http://localhost/ || exit 1

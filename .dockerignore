@@ -1,0 +1,23 @@
+# Node.js dependencies
+node_modules/
+# Python dependencies
+__pycache__/
+*.pyc
+*.pyo
+# Build output
+dist/
+build/
+# Environment files
+.env
+.env.*
+# Logs
+*.log
+npm-debug.log*
+# OS files
+.DS_Store
+Thumbs.db
+# IDE files
+.idea/
+.vscode/
+# Test coverage
+coverage/
