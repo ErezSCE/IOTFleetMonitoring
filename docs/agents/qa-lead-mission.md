@@ -1,14 +1,14 @@
 # QA Lead — Test Plan
 
 **Agent**: qa-lead  
-**Generated**: 2026-08-09T01:11:25.560Z
+**Generated**: 2026-08-09T01:52:36.649Z
 
 ---
 
 ## Test Plan
 
 {
-  "scope": "No user stories or acceptance criteria were provided; test plan outlines framework and coverage targets.",
+  "scope": "No user stories or acceptance criteria were provided; unable to map tests to specific stories.",
   "unit": [],
   "integration": [],
   "e2e": [],
